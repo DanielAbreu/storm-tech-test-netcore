@@ -16,7 +16,9 @@
         <li class="list-group-item">
             <a asp-action="Create" asp-controller="TodoItem" asp-route-todoListId="@Model.TodoListId">
                 <strong>Add New Item</strong>
-            </a>
+            </a><br>
+            <input type="checkbox" id="hideDoneButton" onclick="hideTasksDone()" name="Hide tasks done">
+            <label for="hideDoneButton"> Hide tasks done</label>
         </li>
 
         @foreach (var item in Model.Items.OrderBy(item => item.Importance))
@@ -35,7 +37,7 @@
                     break;
             }
 
-            <li class="list-group-item @contextualClass">
+            <li id="item-@item.TodoItemId" class="list-group-item @contextualClass">
                 
                 <div class="row">
 
@@ -67,3 +69,18 @@
         }
     </ul>
 </div>
+
+<script type="text/javascript">
+    let items = @Json.Serialize(Model.Items);
+
+    function hideTasksDone(){
+        let hideCheckbox = document.getElementById("hideDoneButton");
+
+        let itemsDone = items.filter(item => item.isDone);
+
+        for(let i = 0; i < itemsDone.length; ++i){
+            let itemNotDoneElem = document.getElementById("item-" + itemsDone[i].todoItemId);
+            itemNotDoneElem.style.display = hideCheckbox.checked ? 'none' : 'block';
+        }
+    }
+</script>
