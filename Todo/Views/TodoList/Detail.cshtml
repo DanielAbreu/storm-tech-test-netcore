@@ -11,14 +11,15 @@
 
 <div class="col-md-6">
 
-    <ul class="list-group">
+    <ul id="itemList" class="list-group">
 
         <li class="list-group-item">
             <a asp-action="Create" asp-controller="TodoItem" asp-route-todoListId="@Model.TodoListId">
                 <strong>Add New Item</strong>
             </a><br>
             <input type="checkbox" id="hideDoneButton" onclick="hideTasksDone()" name="Hide tasks done">
-            <label for="hideDoneButton"> Hide tasks done</label>
+            <label for="hideDoneButton"> Hide tasks done</label><br>
+            <button id="orderByRank" onclick="orderByRank()">Order by rank</button>
         </li>
 
         @foreach (var item in Model.Items.OrderBy(item => item.Importance))
@@ -82,5 +83,12 @@
             let itemNotDoneElem = document.getElementById("item-" + itemsDone[i].todoItemId);
             itemNotDoneElem.style.display = hideCheckbox.checked ? 'none' : 'block';
         }
+    }
+
+    function orderByRank(){
+        let itemsOrderedByRank = items.sort((item1,item2) => item1.rank - item2.rank);
+        let ulElem = document.getElementById("itemList");
+
+        itemsOrderedByRank.forEach((item) => ulElem.appendChild(document.getElementById("item-" + item.todoItemId)));
     }
 </script>
