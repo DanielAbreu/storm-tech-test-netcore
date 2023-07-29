@@ -65,6 +65,19 @@ namespace Todo.Controllers
             return RedirectToListDetail(todoItem.TodoListId);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> CreateItem(TodoItemCreateFields fields)
+        {
+            if (!ModelState.IsValid) { return View(fields); }
+
+            var item = new TodoItem(fields.TodoListId, fields.ResponsiblePartyId, fields.Title, fields.Importance);
+
+            await dbContext.AddAsync(item);
+            await dbContext.SaveChangesAsync();
+
+            return Json(item);
+        }
+
         private RedirectToActionResult RedirectToListDetail(int fieldsTodoListId)
         {
             return RedirectToAction("Detail", "TodoList", new {todoListId = fieldsTodoListId});

@@ -1,11 +1,15 @@
 ﻿@using Todo.Controllers
 @using Todo.Data.Entities
+@using Todo.Data;
 @using Todo.Services
+@using Todo.Views.TodoItem
 @model Todo.Models.TodoLists.TodoListDetailViewmodel
 
 @{
     ViewData["Title"] = $"List: {Model.Title}";
 }
+
+@inject ApplicationDbContext dbContext
 
 <h2>@ViewData["Title"]</h2>
 
@@ -14,9 +18,43 @@
     <ul id="itemList" class="list-group">
 
         <li class="list-group-item">
-            <a asp-action="Create" asp-controller="TodoItem" asp-route-todoListId="@Model.TodoListId">
-                <strong>Add New Item</strong>
-            </a><br>
+            <section>
+                <form>
+
+                    @Html.HiddenFor(m => m.TodoItemCreateFields.TodoListTitle)
+
+                    <div class="form-group">
+                        <label asp-for="TodoItemCreateFields.Title"></label>
+                        <input asp-for="TodoItemCreateFields.Title" name="Title" class="form-control" />
+                        <span asp-validation-for="TodoItemCreateFields.Title" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="TodoItemCreateFields.Importance"></label>
+                        @Html.DropDownListFor(
+                        m => m.TodoItemCreateFields.Importance,
+                        SelectListConvenience.ImportanceSelectListItems,
+                        new {@class="form-control"}
+                        )
+                        <span asp-validation-for="TodoItemCreateFields.Importance" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="TodoItemCreateFields.ResponsiblePartyId">Assigned to</label>
+                        @Html.DropDownListFor(
+                        m => m.TodoItemCreateFields.ResponsiblePartyId,
+                        dbContext.UserSelectListItems(),
+                        new {@class="form-control"}
+                        )
+                        <span asp-validation-for="TodoItemCreateFields.ResponsiblePartyId" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <a href="javascript:void(0)" class="btn btn-default" onclick="submitTodoItem()">Save</a>
+                    </div>
+
+                </form>
+            </section><br>
             <input type="checkbox" id="hideDoneButton" onclick="hideTasksDone()" name="Hide tasks done">
             <label for="hideDoneButton"> Hide tasks done</label><br>
             <button id="orderByRank" onclick="orderByRank()">Order by rank</button>
@@ -95,5 +133,25 @@
         let ulElem = document.getElementById("itemList");
 
         itemsOrderedByRank.forEach((item) => ulElem.appendChild(document.getElementById("item-" + item.todoItemId)));
+    }
+
+    function submitTodoItem() {
+        var data = {
+            TodoListTitle: $('#TodoItemCreateFields_TodoListTitle').val(),
+            Title: $('#TodoItemCreateFields_Title').val(),
+            Importance: $('#TodoItemCreateFields_Importance').val(),
+            ResponsiblePartyId: $('#TodoItemCreateFields_ResponsiblePartyId').val()
+            };
+        $.ajax({
+            type: 'POST',
+            url: "@Url.Action("CreateItem", "TodoItem", new { todoListId = Model.TodoListId})",
+            data: data,
+            success: function (result) {
+                location.reload();
+            },
+            error: function () {
+                alert('Todo item creation failed');
+            }
+        })
     }
 </script>

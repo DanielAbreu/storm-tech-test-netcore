@@ -5,7 +5,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Todo.Data;
 using Todo.Data.Entities;
+using Todo.EntityModelMappers.TodoItems;
 using Todo.EntityModelMappers.TodoLists;
+using Todo.Models.TodoItems;
 using Todo.Models.TodoLists;
 using Todo.Services;
 
@@ -36,7 +38,8 @@ namespace Todo.Controllers
         public async Task<IActionResult> Detail(int todoListId)
         {
             var todoList = dbContext.SingleTodoList(todoListId);
-            var viewmodel = await this.todoListDetailViewmodelFactory.Create(todoList);
+            var fields = TodoItemCreateFieldsFactory.Create(todoList, User.Id());
+            var viewmodel = await this.todoListDetailViewmodelFactory.Create(todoList, fields);
             return View(viewmodel);
         }
 
