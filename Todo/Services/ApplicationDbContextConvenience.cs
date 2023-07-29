@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Todo.Data;
 using Todo.Data.Entities;
@@ -25,6 +26,17 @@ namespace Todo.Services
         public static TodoItem SingleTodoItem(this ApplicationDbContext dbContext, int todoItemId)
         {
             return dbContext.TodoItems.Include(ti => ti.TodoList).Single(ti => ti.TodoItemId == todoItemId);
+        }
+
+        public async static Task<TodoItem> EditTodoItemRank(this ApplicationDbContext dbContext, int todoItemId, int rank)
+        {
+            var todoItem = dbContext.TodoItems.Single(ti => ti.TodoItemId == todoItemId);
+
+            todoItem.Rank = rank;
+
+            await dbContext.SaveChangesAsync();
+
+            return todoItem;
         }
     }
 }

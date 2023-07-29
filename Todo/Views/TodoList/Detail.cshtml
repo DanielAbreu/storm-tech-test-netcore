@@ -80,7 +80,7 @@
                 
                 <div class="row">
 
-                <div class="col-md-8">
+                <div class="col-md-5">
                     <a asp-action="Edit" asp-controller="TodoItem" asp-route-todoItemId="@item.TodoItemId">
 
                         @if (item.IsDone)
@@ -92,6 +92,18 @@
                             <text>@item.Title</text>
                         }
                     </a>
+                </div>
+
+                    <div class="col-md-1">
+                        <small id="rankLabel-@item.TodoItemId">
+                            <text>Rank: @item.Rank</text>
+                        </small>
+                    </div>
+
+                <div class="col-md-2">
+                        <button id="orderByRank" onclick="editItemRank(@item.TodoItemId, true)">Rank +</button>
+                        <br>
+                        <button id="orderByRank" onclick="editItemRank(@item.TodoItemId, false)">Rank -</button>
                 </div>
 
                 <div class="col-md-4 text-right">
@@ -151,6 +163,29 @@
             },
             error: function () {
                 alert('Todo item creation failed');
+            }
+        })
+    }
+
+    function editItemRank(itemId, isToIncrease) {
+        let itemToEdit = items.filter(item => item.todoItemId == itemId)[0];
+        
+        itemToEdit.rank = isToIncrease ? itemToEdit.rank + 1 : itemToEdit.rank - 1;
+
+        var data = {
+            TodoItemId: itemId,
+            Rank: itemToEdit.rank
+        };
+        $.ajax({
+            type: 'PATCH',
+            url: "@Url.Action("EditItemRank", "TodoItem", new { todoListId = Model.TodoListId})",
+            data: data,
+            success: function (result) {
+                $('#rankLabel-' + itemId).text('Rank: ' + itemToEdit.rank);
+                orderByRank();
+            },
+            error: function () {
+                alert('Todo item rank edition failed');
             }
         })
     }

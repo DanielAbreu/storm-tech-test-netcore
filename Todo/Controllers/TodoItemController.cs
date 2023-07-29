@@ -78,6 +78,16 @@ namespace Todo.Controllers
             return Json(item);
         }
 
+        [HttpPatch]
+        public async Task<IActionResult> EditItemRank(TodoItemEditRank todoItemEditRank)
+        {
+            if (!ModelState.IsValid) { return RedirectToListDetail(todoItemEditRank.TodoListId); }
+
+            await dbContext.EditTodoItemRank(todoItemEditRank.TodoItemId, todoItemEditRank.Rank);
+
+            return Ok();
+        }
+
         private RedirectToActionResult RedirectToListDetail(int fieldsTodoListId)
         {
             return RedirectToAction("Detail", "TodoList", new {todoListId = fieldsTodoListId});
