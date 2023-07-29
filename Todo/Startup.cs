@@ -48,7 +48,6 @@ namespace Todo
             services.AddSingleton<IGravatarClient, GravatarClient>();
 
             services.AddScoped<TodoListDetailViewmodelFactory>();
-            services.AddScoped<TodoItemSummaryViewmodelFactory>();
 
             services.AddControllers();
 
