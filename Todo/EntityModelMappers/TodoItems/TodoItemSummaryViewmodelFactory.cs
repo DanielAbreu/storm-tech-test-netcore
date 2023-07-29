@@ -1,13 +1,22 @@
-﻿using Todo.Data.Entities;
+﻿using System.Threading.Tasks;
+using Todo.Data.Entities;
 using Todo.Models.TodoItems;
+using Todo.Services.GravatarServices.Client;
 
 namespace Todo.EntityModelMappers.TodoItems
 {
-    public static class TodoItemSummaryViewmodelFactory
+    public class TodoItemSummaryViewmodelFactory
     {
-        public static TodoItemSummaryViewmodel Create(TodoItem ti)
+        private IGravatarClient gravatarClient;
+        public TodoItemSummaryViewmodelFactory(IGravatarClient gravatarClient) 
         {
-            return new TodoItemSummaryViewmodel(ti.TodoItemId, ti.Title, ti.IsDone, UserSummaryViewmodelFactory.Create(ti.ResponsibleParty), ti.Importance, ti.Rank);
+            this.gravatarClient = gravatarClient;
+        }
+        public async Task<TodoItemSummaryViewmodel> Create(TodoItem ti)
+        {
+            var userSummaryModel = UserSummaryViewmodelFactory.Create(ti.ResponsibleParty);
+            var gravatarProfile = await this.gravatarClient.GetGravatarProfile(userSummaryModel.UserName);
+            return new TodoItemSummaryViewmodel(ti.TodoItemId, ti.Title, ti.IsDone, userSummaryModel, ti.Importance, ti.Rank, gravatarProfile.DisplayName);
         }
     }
 }

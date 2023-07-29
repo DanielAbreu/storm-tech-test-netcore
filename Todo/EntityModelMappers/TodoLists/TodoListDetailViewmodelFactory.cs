@@ -1,15 +1,23 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using Todo.Data.Entities;
 using Todo.EntityModelMappers.TodoItems;
 using Todo.Models.TodoLists;
 
 namespace Todo.EntityModelMappers.TodoLists
 {
-    public static class TodoListDetailViewmodelFactory
+    public class TodoListDetailViewmodelFactory
     {
-        public static TodoListDetailViewmodel Create(TodoList todoList)
+        private TodoItemSummaryViewmodelFactory todoItemSummaryViewmodelFactory;
+        public TodoListDetailViewmodelFactory(TodoItemSummaryViewmodelFactory todoItemSummaryViewmodelFactory) 
         {
-            var items = todoList.Items.Select(TodoItemSummaryViewmodelFactory.Create).ToList();
+            this.todoItemSummaryViewmodelFactory = todoItemSummaryViewmodelFactory;
+        }
+
+        public async Task<TodoListDetailViewmodel> Create(TodoList todoList)
+        {
+            var itemsTasks = todoList.Items.Select(this.todoItemSummaryViewmodelFactory.Create);
+            var items = await Task.WhenAll(itemsTasks);
             return new TodoListDetailViewmodel(todoList.TodoListId, todoList.Title, items);
         }
     }

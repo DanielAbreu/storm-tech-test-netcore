@@ -58,7 +58,12 @@
 
                 <div class="col-md-4 text-right">
                     <small>
-                        @item.ResponsibleParty.UserName
+                            @if (!string.IsNullOrEmpty(item.DisplayName))
+                            {
+                                <text>@item.DisplayName</text>
+                                <br>
+                            }
+                            <text>@item.ResponsibleParty.UserName</text>
 
                         <img src="https://www.gravatar.com/avatar/@Gravatar.GetHash(item.ResponsibleParty.Email)?s=30"/>
 

@@ -10,8 +10,9 @@ namespace Todo.Models.TodoItems
         public bool IsDone { get; }
         public Importance Importance { get; }
         public int Rank { get; }
+        public string DisplayName { get; }
 
-        public TodoItemSummaryViewmodel(int todoItemId, string title, bool isDone, UserSummaryViewmodel responsibleParty, Importance importance, int rank)
+        public TodoItemSummaryViewmodel(int todoItemId, string title, bool isDone, UserSummaryViewmodel responsibleParty, Importance importance, int rank, string gravatarName)
         {
             TodoItemId = todoItemId;
             Title = title;
@@ -19,6 +20,7 @@ namespace Todo.Models.TodoItems
             ResponsibleParty = responsibleParty;
             Importance = importance;
             Rank = rank;
+            DisplayName = gravatarName;
         }
     }
 }
